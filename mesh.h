@@ -1,11 +1,11 @@
 #ifndef MESH_CLASS_H
 #define MESH_CLASS_H
 
-#include<string>
-#include"VAO.h"
-#include"EBO.h"
-#include"Camera.h"
-#include"Texture.h"
+#include <string>
+#include "VAO.h"
+#include "EBO.h"
+#include "Camera.h"
+#include "Texture.h"
 
 class Mesh
 {

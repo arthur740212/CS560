@@ -75,6 +75,12 @@
     <ClCompile Include="camera.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="modelLoader.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -119,10 +125,13 @@
     <ClInclude Include="camera.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
+    <ClInclude Include="texture.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
+    <ClInclude Include="modelLoader.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

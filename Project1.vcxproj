@@ -80,8 +80,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\arthu\Desktop\CS560\Project1\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\arthu\Desktop\CS560\Project1\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>..\CS560\Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>..\CS560\Libraries\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>..\CS560\Libraries\dll;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -126,7 +127,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>opengl32.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,6 +159,8 @@
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="modelLoader.cpp" />
     <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -176,6 +180,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="mesh.h" />
+    <ClInclude Include="modelLoader.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="VAO.h" />
