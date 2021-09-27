@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="資源檔\Shaders">
-      <UniqueIdentifier>{f36c5427-af6f-4e36-a0f0-44c33a88678a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="資源檔\Textures">
       <UniqueIdentifier>{19a505e3-90b3-4f96-8c17-e4b34484a7a1}</UniqueIdentifier>
     </Filter>
@@ -24,6 +21,9 @@
     </Filter>
     <Filter Include="標頭檔\imgui">
       <UniqueIdentifier>{85fc1eac-c9d7-4b61-8c62-bd6d9bd0c5a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="資源檔\Shaders">
+      <UniqueIdentifier>{f36c5427-af6f-4e36-a0f0-44c33a88678a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,7 +75,7 @@
     <ClCompile Include="camera.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-    <ClCompile Include="modelLoader.cpp">
+    <ClCompile Include="model.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
     <ClCompile Include="mesh.cpp">
@@ -128,7 +128,7 @@
     <ClInclude Include="texture.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="modelLoader.h">
+    <ClInclude Include="model.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="mesh.h">
@@ -146,6 +146,12 @@
       <Filter>資源檔\Shaders</Filter>
     </None>
     <None Include="light.vert">
+      <Filter>資源檔\Shaders</Filter>
+    </None>
+    <None Include="defaultColor.frag">
+      <Filter>資源檔\Shaders</Filter>
+    </None>
+    <None Include="defaultColor.vert">
       <Filter>資源檔\Shaders</Filter>
     </None>
   </ItemGroup>

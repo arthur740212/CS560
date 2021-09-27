@@ -160,7 +160,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
-    <ClCompile Include="modelLoader.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -180,7 +180,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="mesh.h" />
-    <ClInclude Include="modelLoader.h" />
+    <ClInclude Include="model.h" />
     <ClInclude Include="shaderClass.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="VAO.h" />
@@ -189,6 +189,8 @@
   <ItemGroup>
     <None Include="default.frag" />
     <None Include="default.vert" />
+    <None Include="defaultColor.frag" />
+    <None Include="defaultColor.vert" />
     <None Include="light.frag" />
     <None Include="light.vert" />
   </ItemGroup>

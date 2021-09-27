@@ -11,6 +11,7 @@ class Texture
 public:
 	GLuint ID;
 	GLuint unit;
+	const char* path;
 	const char* type;
 
 	Texture(const char* image, const char* textureType, GLuint slot, GLenum format, GLenum pixelType);

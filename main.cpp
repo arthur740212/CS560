@@ -3,7 +3,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "mesh.h"
-#include "modelLoader.h"
+#include "model.h"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -100,6 +100,8 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
+	Model model1("teddy.fbx");
+
 	
 	Shader shaderProgram("default.vert", "default.frag");
 
@@ -135,8 +137,9 @@ int main()
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
 	glUniform3f(glGetUniformLocation(shaderProgram.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
-	
-
+	Shader ColorShader("defaultColor.vert", "defaultColor.frag");
+	ColorShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
 
 
 	bool drawTriangle = true;
@@ -171,6 +174,11 @@ int main()
 		if (drawTriangle)
 		{
 			floor.Draw(shaderProgram, camera);
+
+			for (int i = 0; i < model1.meshes.size(); i++)
+			{
+				model1.meshes[i].Draw(ColorShader, camera);
+			}
 		}
 
 		light.Draw(lightShader,camera);

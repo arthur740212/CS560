@@ -2,6 +2,7 @@
 
 Texture::Texture(const char* image, const char* textureType, GLuint slot, GLenum format, GLenum pixelType)
 {
+	path = image;
 	type = textureType;
 
 	int widthImg, heightImg, numColCh;
