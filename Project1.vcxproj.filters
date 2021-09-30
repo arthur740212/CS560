@@ -81,6 +81,12 @@
     <ClCompile Include="mesh.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="VQS.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="quaternion.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -132,6 +138,12 @@
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="mesh.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="VQS.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="quaternion.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

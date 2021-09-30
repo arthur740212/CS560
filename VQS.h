@@ -4,25 +4,25 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glad/glad.h>
-#include <vector>
+#include "quaternion.h"
 
 
 class VQS
 {
 public:
 
-private:
-	
+	VQS operator*(VQS rhs);
+	glm::vec3 operator*(glm::vec3 rhs);
+
+
 	glm::vec3 position;
-	glm::quat quaternion;
-	glm::float64 scale;
+	Quaternion quaternion;
+	float scale;
+private:
 
-	
+
+
+
 };
-
-glm::vec3 operator*(glm::vec3 lhs, const VQS& rhs)
-{
-
-}
 
 #endif 

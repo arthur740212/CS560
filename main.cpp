@@ -16,7 +16,8 @@
 #include "EBO.h"
 #include "texture.h"
 #include "camera.h"
-
+#include "VQS.h"
+#include "quaternion.h"
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -148,6 +149,8 @@ int main()
 	glEnable(GL_DEPTH_TEST);
 
 	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+
+	quatTest();
 
 	while (!glfwWindowShouldClose(window))
 	{
