@@ -13,7 +13,14 @@ public:
 	Quaternion(float real, glm::vec3 image);
 	~Quaternion();
 
-	Quaternion operator-();
+	float Length();
+	float SqrLength();
+	void Normalize();
+	Quaternion Normalized();
+	Quaternion Inverse();
+
+	Quaternion Scale(float c);
+	
 	Quaternion operator*(Quaternion rhs);
 	Quaternion operator*(glm::vec3 rhs);
 

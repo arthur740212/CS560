@@ -7,12 +7,21 @@
 #include "quaternion.h"
 
 
+
+
 class VQS
 {
 public:
 
+	VQS();
+	VQS(glm::vec3 _position,
+		Quaternion _quaternion,
+		float _scale);
+
 	VQS operator*(VQS rhs);
 	glm::vec3 operator*(glm::vec3 rhs);
+
+	VQS Inverse();
 
 
 	glm::vec3 position;
@@ -24,5 +33,7 @@ private:
 
 
 };
+
+void VQStest();
 
 #endif 
