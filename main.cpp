@@ -101,7 +101,7 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	Model model1("teddy.fbx");
+	Model model1("steve.x");
 
 	
 	Shader shaderProgram("default.vert", "default.frag");
@@ -178,6 +178,7 @@ int main()
 
 			for (int i = 0; i < model1.meshes.size(); i++)
 			{
+				//std::cout << model1.meshes.size() << std::endl;
 				model1.meshes[i].Draw(ColorShader, camera);
 			}
 		}

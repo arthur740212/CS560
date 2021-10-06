@@ -95,7 +95,6 @@ void Model::ProcessNode(aiNode* node, const aiScene* scene)
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        std::cout << "-->";
         ProcessNode(node->mChildren[i], scene);
     }
     std::cout << node->mName.C_Str() << std::endl;
