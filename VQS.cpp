@@ -52,6 +52,23 @@ VQS VQS::Inverse()
 
 }
 
+void VQS::Decompose(aiMatrix4x4 aiMat)
+{
+	aiVector3D v;
+	aiVector3D s;
+	aiQuaternion q;
+
+	aiMat.Decompose(s, q, v);
+
+	position.x = v.x;
+	position.y = v.y;
+	position.z = v.z;
+	quaternion.s = q.w;
+	quaternion.v = glm::vec3(q.x, q.y, q.z);
+	
+	scale = s.x;
+}
+
 
 void VQStest() 
 {

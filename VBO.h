@@ -4,6 +4,7 @@
 #include <glm/glm.hpp>
 #include <glad/glad.h>
 #include <vector>
+#include "defConst.h"
 
 struct Vertex
 {
@@ -12,8 +13,8 @@ struct Vertex
 	glm::vec3 color;
 	glm::vec2 texUV;
 
-	int boneIDs[4];
-    float boneWeights[4];
+	int boneIDs[MAX_BONES];
+	float boneWeights[MAX_BONES];
 };
 
 class VBO

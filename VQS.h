@@ -5,7 +5,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glad/glad.h>
 #include "quaternion.h"
-
+#include "Libraries/include/assimp/scene.h"
 
 
 
@@ -23,6 +23,7 @@ public:
 
 	VQS Inverse();
 
+	void Decompose(aiMatrix4x4 aiMat);
 
 	glm::vec3 position;
 	Quaternion quaternion;

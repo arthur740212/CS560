@@ -146,6 +146,9 @@
     <ClInclude Include="quaternion.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="defConst.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">

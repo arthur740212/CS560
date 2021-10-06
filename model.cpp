@@ -27,43 +27,43 @@ Model::~Model()
 {
 }
 
-struct vqs 
-{
-    glm::vec3  v;
-    glm::vec4  q;
-    glm::vec1  s;
-};
-
-void Getvqs(aiNode* node)
-{
-    aiVector3D v;
-    aiVector3D s;
-    aiQuaternion q;
-
-    node->mTransformation.Decompose(s, q, v);
-
-    vqs vqs;
-    vqs.v.x = v.x;
-    vqs.v.y = v.y;
-    vqs.v.z = v.z;
-    vqs.q.w = q.w;
-    vqs.q.x = q.x;
-    vqs.q.y = q.y;
-    vqs.q.z = q.z;
-    vqs.s.x = s.x;
-
-
-    std::cout << "v : ( " << v.x << "," << v.y << "," << v.z << ") "
-        << "q : ( " << q.w << "," << q.x << "," << v.y << "," << v.z << ") "
-        << "s : " << s.x << std::endl;
-}
+//struct vqs 
+//{
+//    glm::vec3  v;
+//    glm::vec4  q;
+//    glm::vec1  s;
+//};
+//
+//void Getvqs(aiNode* node)
+//{
+//    aiVector3D v;
+//    aiVector3D s;
+//    aiQuaternion q;
+//
+//    node->mTransformation.Decompose(s, q, v);
+//
+//    vqs vqs;
+//    vqs.v.x = v.x;
+//    vqs.v.y = v.y;
+//    vqs.v.z = v.z;
+//    vqs.q.w = q.w;
+//    vqs.q.x = q.x;
+//    vqs.q.y = q.y;
+//    vqs.q.z = q.z;
+//    vqs.s.x = s.x;
+//
+//
+//    std::cout << "v : ( " << v.x << "," << v.y << "," << v.z << ") "
+//        << "q : ( " << q.w << "," << q.x << "," << v.y << "," << v.z << ") "
+//        << "s : " << s.x << std::endl;
+//}
 
 void Model::ProcessNode(aiNode* node, const aiScene* scene, int layer)
 {
     std::cout << node->mName.C_Str() << std::endl;
    
 
-    Getvqs(node);
+    //Getvqs(node);
     layer++;
     // process all the node's meshes (if any)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -122,7 +122,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
         vector.z = mesh->mNormals[i].z;
         vertex.normal = vector;
 
-
+        SetVertexBoneDataToDefault(vertex);
 
         if (mesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
         {
@@ -150,6 +150,7 @@ Mesh Model::ProcessMesh(aiMesh* mesh, const aiScene* scene)
     {
         [...]
     }*/
+    ExtractBoneWeightForVertices(vertices, mesh, scene);
 
     return Mesh(vertices, indices, textures);
 }

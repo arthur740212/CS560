@@ -1,5 +1,5 @@
 #include "mesh.h"
-
+#include "defConst.h"
 Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures) 
 {
 	Mesh::vertices = vertices;
@@ -15,6 +15,8 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 	VAO.LinkVBO(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
 	VAO.LinkVBO(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
 	VAO.LinkVBO(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(8 * sizeof(float)));
+	VAO.LinkVBO(VBO, 5, MAX_BONES, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+	VAO.LinkVBO(VBO, 6, MAX_BONES, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
 
 	VAO.Unbind();
 	VBO.Unbind();

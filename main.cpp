@@ -102,7 +102,12 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	Model model1("steve.x");
-
+	Texture modeltexture[]
+	{
+		Texture("pop_cat.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+	};
+	std::vector <Texture> modtex(modeltexture, modeltexture + sizeof(modeltexture) / sizeof(Texture));
+	model1.meshes[0].textures = modtex;
 	
 	Shader shaderProgram("default.vert", "default.frag");
 
@@ -148,7 +153,7 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 2.0f));
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 50.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
@@ -166,7 +171,7 @@ int main()
 		}
 		shaderProgram.Activate();
 
-		camera.UpdateMatrix(45.0f, 0.01f, 100.0f);
+		camera.UpdateMatrix(45.0f, 0.01f, 1000.0f);
 		camera.Matrix(shaderProgram, "camMatrix");
 
 		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.position.x, camera.position.y,camera.position.z);
@@ -179,7 +184,7 @@ int main()
 			for (int i = 0; i < model1.meshes.size(); i++)
 			{
 				//std::cout << model1.meshes.size() << std::endl;
-				model1.meshes[i].Draw(ColorShader, camera);
+				model1.meshes[i].Draw(shaderProgram, camera);
 			}
 		}
 
