@@ -1,5 +1,8 @@
 #include "VQS.h"
 #include <iostream>
+#include "Libraries/include/glm/gtx/transform.hpp"
+#include "Libraries/include/glm/gtx/quaternion.hpp"
+#include <glm/gtx/string_cast.hpp>
 
 std::ostream& operator<<(std::ostream& out, VQS vqs)
 {
@@ -35,13 +38,26 @@ VQS VQS::operator*(VQS rhs)
 	result.scale = scale * rhs.scale;
 	result.quaternion = quaternion * rhs.quaternion;
 	result.position = *this * (rhs.position);
-
 	return result;
 }
 
 glm::vec3 VQS::operator*(glm::vec3 rhs)
 {
 	return (quaternion * (rhs * scale) * quaternion.Inverse()).v + position;
+}
+
+glm::mat4 VQS::VQStoMatrix() 
+{
+	glm::mat4 matPos, matRot, matScl;
+
+	matScl = glm::scale(glm::mat4(1.0f) , glm::vec3(scale, scale, scale));
+	matPos = glm::translate(glm::mat4(1.0f), position);
+	glm::quat rotation = glm::normalize(glm::quat(quaternion.s, quaternion.v.x, quaternion.v.y, quaternion.v.z));
+	matRot = glm::toMat4(rotation);
+	
+	glm::mat4 output = matPos * matRot * matScl;
+	//std::cout<< glm::to_string(output) << std::endl;
+	return output;
 }
 
 VQS VQS::Inverse()
@@ -67,6 +83,8 @@ void VQS::Decompose(aiMatrix4x4 aiMat)
 	quaternion.v = glm::vec3(q.x, q.y, q.z);
 	
 	scale = s.x;
+
+	//std::cout << *this << std::endl;
 }
 
 

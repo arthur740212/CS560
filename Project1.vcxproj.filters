@@ -87,6 +87,15 @@
     <ClCompile Include="quaternion.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="bone.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="animation.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="animator.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -147,6 +156,15 @@
       <Filter>標頭檔</Filter>
     </ClInclude>
     <ClInclude Include="defConst.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="bone.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="animation.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="animator.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,5 +21,6 @@ public:
 
 	// Draws the mesh
 	void Draw(Shader& shader, Camera& camera);
+	void DrawLine(Shader& shader, Camera& camera);
 };
 #endif

@@ -15,13 +15,29 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 	VAO.LinkVBO(VBO, 1, 3, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
 	VAO.LinkVBO(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
 	VAO.LinkVBO(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(8 * sizeof(float)));
-	VAO.LinkVBO(VBO, 5, MAX_BONES, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
-	VAO.LinkVBO(VBO, 6, MAX_BONES, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
+	VAO.LinkVBO(VBO, 5, MAX_BONE_INFLUENCE, GL_INT, sizeof(Vertex), (void*)offsetof(Vertex, boneIDs));
+	VAO.LinkVBO(VBO, 6, MAX_BONE_INFLUENCE, GL_FLOAT, sizeof(Vertex), (void*)offsetof(Vertex, boneWeights));
 
 	VAO.Unbind();
 	VBO.Unbind();
 	EBO.Unbind();
 	
+}
+
+void Mesh::DrawLine(Shader& shader, Camera& camera)
+{
+	shader.Activate();
+	VAO.Bind();
+
+
+	// Take care of the camera Matrix
+	glUniform3f(glGetUniformLocation(shader.ID, "camPos"), camera.position.x, camera.position.y, camera.position.z);
+	camera.Matrix(shader, "camMatrix");
+
+	// Draw the actual mesh
+	glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
+	glPointSize(5);
+	glDrawArrays(GL_POINTS, indices[0], indices.size());
 }
 
 void Mesh::Draw(Shader& shader, Camera& camera) 

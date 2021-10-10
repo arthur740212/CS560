@@ -18,6 +18,10 @@
 #include "camera.h"
 #include "VQS.h"
 #include "quaternion.h"
+#include "animation.h"
+#include "animator.h"
+
+#include <glm/gtx/string_cast.hpp>
 
 // Vertices coordinates
 Vertex vertices[] =
@@ -69,8 +73,21 @@ unsigned int width = 800;
 unsigned int height = 800;
 
 
+
 int main()
 {
+
+	float deltaTime = 0;
+	float lastFrame = glfwGetTime();
+
+	//glm::mat4 mat1;
+	//glm::mat4 mat2;
+	//glm::mat4 mat3 = mat1 * mat2;
+
+	//std::cout << glm::to_string(mat1) << std::endl;
+	//std::cout << glm::to_string(mat2) << std::endl;
+	//std::cout << glm::to_string(mat3) << std::endl;
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
@@ -102,9 +119,12 @@ int main()
 	ImGui_ImplOpenGL3_Init("#version 330");
 
 	Model model1("steve.x");
+	Animation anim1("steve.x", &model1);
+	Animator animor1(&anim1);
+
 	Texture modeltexture[]
 	{
-		Texture("pop_cat.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+		Texture("brick.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
 	};
 	std::vector <Texture> modtex(modeltexture, modeltexture + sizeof(modeltexture) / sizeof(Texture));
 	model1.meshes[0].textures = modtex;
@@ -134,6 +154,7 @@ int main()
 	glm::mat4 pyramidModel = glm::mat4(1.0f);
 	pyramidModel = glm::translate(pyramidModel, pyramidPos);
 
+	glm::mat4 modelSize = glm::scale(glm::mat4(1.0f), glm::vec3(0.02f, 0.02f, 0.02f));
 
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
@@ -153,10 +174,16 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 50.0f));
+	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 5.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
+		float currentFrame = glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		animor1.UpdateAnimation(deltaTime);
+
 		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -175,15 +202,26 @@ int main()
 		camera.Matrix(shaderProgram, "camMatrix");
 
 		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.position.x, camera.position.y,camera.position.z);
-
+		
+		ColorShader.Activate();
+		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
+		floor.DrawLine(ColorShader, camera);
 		
 		if (drawTriangle)
 		{
-			floor.Draw(shaderProgram, camera);
-
+			
+			shaderProgram.Activate();
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
+			auto transforms = animor1.GetFinalBoneMatrices();
+			for (int i = 0; i < transforms.size(); ++i)
+			{
+				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
+				glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i]));
+			}
 			for (int i = 0; i < model1.meshes.size(); i++)
 			{
-				//std::cout << model1.meshes.size() << std::endl;
+				//ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
+			//std::cout << model1.meshes.size() << std::endl;
 				model1.meshes[i].Draw(shaderProgram, camera);
 			}
 		}
@@ -215,5 +253,6 @@ int main()
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+
 	return 0;
 }

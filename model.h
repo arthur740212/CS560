@@ -14,6 +14,9 @@
 #include "VQS.h"
 #define ASSIMP_LOAD_FLAGS (aiProcess_Triangulate|aiProcess_GenSmoothNormals|aiProcess_FlipUVs|aiProcess_JoinIdenticalVertices)
 
+
+glm::mat4 ConvertMatrixToGLMFormat(const aiMatrix4x4& from);
+
 struct BoneInfo
 {
     /*id is index in finalBoneMatrices*/
@@ -49,13 +52,13 @@ private:
 
     std::map<std::string, BoneInfo> m_BoneInfoMap; //
     int m_BoneCounter = 0;
-
+public:
     auto& GetBoneInfoMap() { return m_BoneInfoMap; }
     int& GetBoneCount() { return m_BoneCounter; }
 
     void SetVertexBoneDataToDefault(Vertex& vertex)
     {
-        for (int i = 0; i < MAX_BONES; i++)
+        for (int i = 0; i < MAX_BONE_INFLUENCE; i++)
         {
             vertex.boneIDs[i] = -1;
             vertex.boneWeights[i] = 0.0f;
@@ -63,7 +66,7 @@ private:
     }
     void SetVertexBoneData(Vertex& vertex, int boneID, float weight)
     {
-        for (int i = 0; i < MAX_BONES; ++i)
+        for (int i = 0; i < MAX_BONE_INFLUENCE; ++i)
         {
             if (vertex.boneIDs[i] < 0)
             {
@@ -84,9 +87,9 @@ private:
             {
                 BoneInfo newBoneInfo;
                 newBoneInfo.id = m_BoneCounter;
-                newBoneInfo.vqs.Decompose(mesh->mBones[boneIndex]->mOffsetMatrix);
-               /* newBoneInfo.offset = AssimpGLMHelpers::ConvertMatrixToGLMFormat(
-                    mesh->mBones[boneIndex]->mOffsetMatrix);*/
+                //newBoneInfo.vqs.Decompose(mesh->mBones[boneIndex]->mOffsetMatrix);
+                newBoneInfo.offset = ConvertMatrixToGLMFormat(
+                    mesh->mBones[boneIndex]->mOffsetMatrix);
                 m_BoneInfoMap[boneName] = newBoneInfo;
                 boneID = m_BoneCounter;
                 m_BoneCounter++;

@@ -13,8 +13,8 @@ struct Vertex
 	glm::vec3 color;
 	glm::vec2 texUV;
 
-	int boneIDs[MAX_BONES];
-	float boneWeights[MAX_BONES];
+	int boneIDs[MAX_BONE_INFLUENCE];
+	float boneWeights[MAX_BONE_INFLUENCE];
 };
 
 class VBO

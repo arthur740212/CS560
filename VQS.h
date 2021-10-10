@@ -9,6 +9,7 @@
 
 
 
+
 class VQS
 {
 public:
@@ -17,6 +18,8 @@ public:
 	VQS(glm::vec3 _position,
 		Quaternion _quaternion,
 		float _scale);
+
+	glm::mat4 VQStoMatrix();
 
 	VQS operator*(VQS rhs);
 	glm::vec3 operator*(glm::vec3 rhs);
@@ -36,5 +39,6 @@ private:
 };
 
 void VQStest();
-
+std::ostream& operator<<(std::ostream& out, VQS vqs);
+std::ostream& operator<<(std::ostream& out, glm::vec3 vqs);
 #endif 
