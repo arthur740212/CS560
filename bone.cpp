@@ -25,10 +25,7 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
         aiQuaternion aiOrientation = channel->mRotationKeys[rotationIndex].mValue;
         float timeStamp = channel->mRotationKeys[rotationIndex].mTime;
         KeyRotation data;
-        data.orientation = glm::quat(aiOrientation.w, glm::vec3(aiOrientation.x, aiOrientation.y, aiOrientation.z));
         data.qua = Quaternion(aiOrientation.w, glm::vec3(aiOrientation.x, aiOrientation.y, aiOrientation.z));
-      /*  std::cout << glm::to_string(data.orientation) << std::endl;
-        std::cout << data.qua << std::endl;*/
         data.timeStamp = timeStamp;
         m_Rotations.push_back(data);
     }
@@ -39,7 +36,6 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
         aiVector3D scale = channel->mScalingKeys[keyIndex].mValue;
         float timeStamp = channel->mScalingKeys[keyIndex].mTime;
         KeyScale data;
-        data.scale = glm::vec3(scale.x, scale.y, scale.z);
         data.uniScale = scale.x;
         data.timeStamp = timeStamp;
         m_Scales.push_back(data);
@@ -56,6 +52,7 @@ void Bone::Update(float animationTime)
 
     VQS local(GetInterpolatedPos(animationTime), GetInterpolatedQuat(animationTime), GetInterpolatedScale(animationTime));
     m_LocalTransform = local.VQStoMatrix();
+    m_LocalVQS = local;
 }
 
 glm::vec3 Bone::GetInterpolatedPos(float animationTime)

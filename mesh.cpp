@@ -35,8 +35,8 @@ void Mesh::DrawLine(Shader& shader, Camera& camera)
 	camera.Matrix(shader, "camMatrix");
 
 	// Draw the actual mesh
-	glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
-	glPointSize(5);
+	//glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
+	glPointSize(7.5f);
 	glDrawArrays(GL_POINTS, indices[0], indices.size());
 }
 

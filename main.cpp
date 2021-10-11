@@ -118,9 +118,12 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	Model model1("steve.x");
-	Animation anim1("steve.x", &model1);
+	Model model1("dancing_vampire.dae");
+	Animation anim1("dancing_vampire.dae", &model1);
 	Animator animor1(&anim1);
+	anim1.GetSkeletonBones();
+
+	Mesh skeleton(anim1.m_SkeletonBones, anim1.m_SkeletonBonesIndices, anim1.m_SkeletonBonesTextures);
 
 	Texture modeltexture[]
 	{
@@ -209,7 +212,7 @@ int main()
 		
 		if (drawTriangle)
 		{
-			
+
 			shaderProgram.Activate();
 			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
 			auto transforms = animor1.GetFinalBoneMatrices();
@@ -218,14 +221,26 @@ int main()
 				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
 				glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i]));
 			}
+
+			ColorShader.Activate();
+			for (int i = 0; i < transforms.size(); ++i)
+			{
+				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
+				glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i]));
+			}
+
 			for (int i = 0; i < model1.meshes.size(); i++)
 			{
-				//ourShader.setMat4("finalBonesMatrices[" + std::to_string(i) + "]", transforms[i]);
-			//std::cout << model1.meshes.size() << std::endl;
+				
+				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+				//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 				model1.meshes[i].Draw(shaderProgram, camera);
+				glClear(GL_DEPTH_BUFFER_BIT);
+				skeleton.DrawLine(ColorShader, camera);
+				
 			}
 		}
-
+		
 		light.Draw(lightShader,camera);
 
 		ImGui::Begin("Hello Imgui");

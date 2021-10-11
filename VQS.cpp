@@ -21,7 +21,7 @@ std::ostream& operator<<(std::ostream& out, glm::vec3 vqs)
 VQS::VQS() 
 {
 	position = glm::vec3(0);
-	quaternion = Quaternion(0.0f, glm::vec3(1.0)).Normalized();
+	quaternion = Quaternion(1.0f, glm::vec3(0.0f)).Normalized();
 	scale = 1.0f;
 }
 VQS::VQS(glm::vec3 _position,Quaternion _quaternion,float _scale) 

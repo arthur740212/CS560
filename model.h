@@ -22,10 +22,11 @@ struct BoneInfo
     /*id is index in finalBoneMatrices*/
     int id;
 
+    Vertex boneVertex;
     /*offset matrix transforms vertex from model space to bone space*/
     glm::mat4 offset;
 
-    VQS vqs;
+    VQS offsetVQS;
 };
 
 class Model
@@ -90,6 +91,10 @@ public:
                 //newBoneInfo.vqs.Decompose(mesh->mBones[boneIndex]->mOffsetMatrix);
                 newBoneInfo.offset = ConvertMatrixToGLMFormat(
                     mesh->mBones[boneIndex]->mOffsetMatrix);
+                newBoneInfo.offsetVQS.Decompose(mesh->mBones[boneIndex]->mOffsetMatrix);
+                newBoneInfo.boneVertex.position = newBoneInfo.offsetVQS.Inverse().position;
+                newBoneInfo.boneVertex.color = glm::vec3(0.0f, 0.7f, 0.0f);
+                newBoneInfo.boneVertex.boneIDs[0] = m_BoneCounter;
                 m_BoneInfoMap[boneName] = newBoneInfo;
                 boneID = m_BoneCounter;
                 m_BoneCounter++;
@@ -111,6 +116,7 @@ public:
             }
         }
     }
+
 };
 
 

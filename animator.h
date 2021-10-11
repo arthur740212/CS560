@@ -9,43 +9,18 @@
 class Animator
 {
 public:
-    Animator(Animation* Animation)
-    {
-        m_CurrentTime = 0.0;
-        m_CurrentAnimation = Animation;
+    Animator(Animation* Animation);
 
-        m_FinalBoneMatrices.reserve(100);
+    void UpdateAnimation(float dt);
 
-        for (int i = 0; i < 100; i++)
-            m_FinalBoneMatrices.push_back(glm::mat4(1.0f));
-    }
+    void PlayAnimation(Animation* pAnimation);
 
-    void UpdateAnimation(float dt)
-    {
-        m_DeltaTime = dt;
-        if (m_CurrentAnimation)
-        {
-            m_CurrentTime += m_CurrentAnimation->GetTicksPerSecond() * dt;
-            m_CurrentTime = fmod(m_CurrentTime, m_CurrentAnimation->GetDuration());
-            CalculateBoneTransform(&m_CurrentAnimation->GetRootNode(), glm::mat4(1.0f));
-        }
-    }
+    void CalculateBoneVQS(const AssimpNodeData* node, VQS parentVQS);
 
-    void PlayAnimation(Animation* pAnimation)
-    {
-        m_CurrentAnimation = pAnimation;
-        m_CurrentTime = 0.0f;
-    }
-
-    void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
+   /* void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
     {
         std::string nodeName = node->name;
-       // VQS temp = node->transformation;
-        //std::cout << nodeName << std::endl;  
-       // std::cout << temp << std::endl;
-       // glm::mat4 nodeTransform = temp.VQStoMatrix();
         glm::mat4 nodeTransform = (node->transformation);
-        //std::cout <<glm::to_string(nodeTransform) << std::endl;
         Bone* Bone = m_CurrentAnimation->FindBone(nodeName);
 
         if (Bone)
@@ -66,15 +41,22 @@ public:
 
         for (int i = 0; i < node->childrenCount; i++)
             CalculateBoneTransform(&node->children[i], globalTransformation);
-    }
+    }*/
 
     std::vector<glm::mat4> GetFinalBoneMatrices()
     {
+        for (int i = 0; i < 100; i++)
+        {
+            m_FinalBoneMatrices[i] = m_FinalBoneVQSes[i].VQStoMatrix();
+        }
         return m_FinalBoneMatrices;
     }
 
 private:
     std::vector<glm::mat4> m_FinalBoneMatrices;
+    std::vector<VQS> m_FinalBoneVQSes;
+    std::vector <Vertex> SkeletonVertices;
+    std::vector <GLuint> SkeletonIndices;
     Animation* m_CurrentAnimation;
     float m_CurrentTime;
     float m_DeltaTime;
