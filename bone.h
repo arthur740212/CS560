@@ -20,13 +20,14 @@ struct KeyPosition
 
 struct KeyRotation
 {
-    //Quaternion orientation;
+    Quaternion qua;
     glm::quat orientation;
     float timeStamp;
 };
 
 struct KeyScale
 {
+    float uniScale;
     glm::vec3 scale;
     float timeStamp;
 };
@@ -48,22 +49,11 @@ private:
 public:
     Bone(const std::string& name, int ID, const aiNodeAnim* channel);
 
-    void Update(float animationTime)
-    {
-        
-        glm::mat4 translation = InterpolatePosition(animationTime);
-        glm::mat4 rotation = InterpolateRotation(animationTime);
-        glm::mat4 scale = InterpolateScaling(animationTime);
-        m_LocalTransform = translation * rotation * scale;
-        
-        //std::cout << m_Name << glm::to_string(m_LocalTransform) << std::endl;
-        //VQS interpolatedVQS;
-    }
+    void Update(float animationTime);
 
-    glm::vec3 GetInterpolatedPos()
-    {}
-    Quaternion GetInterpolatedQuat() {}
-    glm::vec3 GetInterpolatedScale() {}
+    glm::vec3 GetInterpolatedPos(float animationTime);
+    Quaternion GetInterpolatedQuat(float animationTime);
+    float GetInterpolatedScale(float animationTime);
 
     glm::mat4 GetLocalTransform() { return m_LocalTransform; }
     std::string GetBoneName() const { return m_Name; }
@@ -72,44 +62,19 @@ public:
 
     /* Gets the current index on mKeyPositions to interpolate to based on
     the current animation time*/
-    int GetPositionIndex(float animationTime)
-    {
-        for (int index = 0; index < m_NumPositions - 1; ++index)
-        {
-            if (animationTime < m_Positions[index + 1].timeStamp)
-                return index;
-        }
-        assert(0);
-    }
+    int GetPositionIndex(float animationTime);
 
     /* Gets the current index on mKeyRotations to interpolate to based on the
     current animation time*/
-    int GetRotationIndex(float animationTime)
-    {
-        for (int index = 0; index < m_NumRotations - 1; ++index)
-        {
-            if (animationTime < m_Rotations[index + 1].timeStamp)
-                return index;
-        }
-        assert(0);
-    }
+    int GetRotationIndex(float animationTime);
 
     /* Gets the current index on mKeyScalings to interpolate to based on the
     current animation time */
-    int GetScaleIndex(float animationTime)
-    {
-        for (int index = 0; index < m_NumScalings - 1; ++index)
-        {
-            if (animationTime < m_Scales[index + 1].timeStamp)
-                return index;
-        }
-        assert(0);
-    }
+    int GetScaleIndex(float animationTime);
 
 private:
-
-    /* Gets normalized value for Lerp & Slerp*/
-    float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
+     
+    /*float GetScaleFactor(float lastTimeStamp, float nextTimeStamp, float animationTime)
     {
         float scaleFactor = 0.0f;
         float midWayLength = animationTime - lastTimeStamp;
@@ -118,8 +83,6 @@ private:
         return scaleFactor;
     }
 
-    /*figures out which position keys to interpolate b/w and performs the interpolation
-    and returns the translation matrix*/
     glm::mat4 InterpolatePosition(float animationTime)
     {
         if (1 == m_NumPositions)
@@ -133,8 +96,6 @@ private:
         return glm::translate(glm::mat4(1.0f), finalPosition);
     }
 
-    /*figures out which rotations keys to interpolate b/w and performs the interpolation
-    and returns the rotation matrix*/
     glm::mat4 InterpolateRotation(float animationTime)
     {
         if (1 == m_NumRotations)
@@ -150,11 +111,29 @@ private:
         glm::quat finalRotation = glm::slerp(m_Rotations[p0Index].orientation,
             m_Rotations[p1Index].orientation, scaleFactor);
         finalRotation = glm::normalize(finalRotation);
+        Quaternion q1(m_Rotations[p0Index].qua.Normalized());
+        Quaternion q2(m_Rotations[p1Index].qua.Normalized());
+        float t = (animationTime - m_Positions[p0Index].timeStamp) / (m_Positions[p1Index].timeStamp - m_Positions[p0Index].timeStamp);
+        float dotProd = q1.Dot(q2);
+        if (dotProd > 1.0f) { dotProd = 1.0f; }
+        if (dotProd < -1.0f) { dotProd = -1.0f; }
+        float alpha = acos(dotProd);
+        float sinAlpha = sin(alpha);
+        Quaternion finQua;
+        if (sinAlpha != 0) 
+        {
+            finQua = q1.Scale(sin((1 - t) * alpha) / sinAlpha) + q2.Scale(sin(t * alpha) / sinAlpha);
+        }
+        else
+        {
+            finQua = q1;
+        }
+        finQua.Normalize();
+        std::cout << glm::to_string(finalRotation) << std::endl;
+        std::cout << q1.Dot(q2)<<" "<< alpha << "\n" << finQua << std::endl;
         return glm::toMat4(finalRotation);
     }
 
-    /*figures out which scaling keys to interpolate b/w and performs the interpolation
-    and returns the scale matrix*/
     glm::mat4 InterpolateScaling(float animationTime)
     {
         if (1 == m_NumScalings)
@@ -168,6 +147,7 @@ private:
             , scaleFactor);
         return glm::scale(glm::mat4(1.0f), finalScale);
     }
+    */
 };
 
 

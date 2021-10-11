@@ -41,11 +41,11 @@ public:
     {
         std::string nodeName = node->name;
        // VQS temp = node->transformation;
-        std::cout << nodeName << std::endl;  
+        //std::cout << nodeName << std::endl;  
        // std::cout << temp << std::endl;
        // glm::mat4 nodeTransform = temp.VQStoMatrix();
         glm::mat4 nodeTransform = (node->transformation);
-        std::cout <<glm::to_string(nodeTransform) << std::endl;
+        //std::cout <<glm::to_string(nodeTransform) << std::endl;
         Bone* Bone = m_CurrentAnimation->FindBone(nodeName);
 
         if (Bone)

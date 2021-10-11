@@ -1,5 +1,5 @@
 #include "quaternion.h"
-#include <iostream>
+
 
 std::ostream& operator<<(std::ostream& out, Quaternion q)
 {
@@ -11,6 +11,16 @@ Quaternion::Quaternion()
 {
 	s = 1.0f;
 	v = glm::vec3(0);
+}
+Quaternion& Quaternion::operator=(const Quaternion& rhs)
+{
+	this->s = rhs.s;
+	this->v = rhs.v;
+	return *this;
+}
+Quaternion::Quaternion(const Quaternion& obj) 
+{
+	*this = obj;
 }
 Quaternion::Quaternion(glm::vec3 image) 
 {
@@ -26,6 +36,10 @@ Quaternion::~Quaternion()
 {
 }
 
+float Quaternion::Dot(Quaternion rhs) 
+{
+	return s * rhs.s + glm::dot(v, rhs.v);
+}
 
 float Quaternion::Length()
 {
@@ -65,6 +79,16 @@ Quaternion Quaternion::Inverse()
 {
 	Quaternion conjugate(this->s, -this->v);
 	return conjugate.Scale(1.0f / SqrLength());
+}
+
+Quaternion Quaternion::operator+(Quaternion rhs)
+{
+	Quaternion result;
+
+	result.s = s + rhs.s;
+	result.v = v + rhs.v;
+
+	return result;
 }
 
 Quaternion Quaternion::operator*(Quaternion rhs)
