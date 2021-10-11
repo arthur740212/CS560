@@ -118,12 +118,15 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	Model model1("dancing_vampire.dae");
-	Animation anim1("dancing_vampire.dae", &model1);
+	Model model1("yodan.x");
+	Animation anim1("yodan.x", &model1);
 	Animator animor1(&anim1);
 	anim1.GetSkeletonBones();
+	anim1.GetSkeletonBoneHiearchy(&anim1.GetRootNode(), 0);
+
 
 	Mesh skeleton(anim1.m_SkeletonBones, anim1.m_SkeletonBonesIndices, anim1.m_SkeletonBonesTextures);
+	Mesh skeletonLine(anim1.m_SkeletonBones, anim1.m_SkeletonBoneLineIndices, anim1.m_SkeletonBonesTextures);
 
 	Texture modeltexture[]
 	{
@@ -173,21 +176,27 @@ int main()
 
 
 	bool drawTriangle = true;
+	bool drawFrame = false;
+	bool drawBone = true;
+	bool animPause = false;
 	float rotation = 0.0f;
 
 	glEnable(GL_DEPTH_TEST);
 
-	Camera camera(width, height, glm::vec3(0.0f, 0.0f, 5.0f));
+	Camera camera(width, height, glm::vec3(0.0f, 1.0f, 5.0f));
 
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+		float FPS = 1 / deltaTime;
 
-		animor1.UpdateAnimation(deltaTime);
-
-		glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
+		if (!animPause) 
+		{
+			animor1.UpdateAnimation(deltaTime);
+		}
+		glClearColor(0.7f, 0.7f, 0.5f, 0.5f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ImGui_ImplOpenGL3_NewFrame();
@@ -208,45 +217,57 @@ int main()
 		
 		ColorShader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
-		floor.DrawLine(ColorShader, camera);
+		//floor.DrawLine(ColorShader, camera);
 		
 		if (drawTriangle)
 		{
 
 			shaderProgram.Activate();
 			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
-			auto transforms = animor1.GetFinalBoneMatrices();
+			auto transforms = animor1.GetFinalBoneVQSes();
 			for (int i = 0; i < transforms.size(); ++i)
 			{
 				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
-				glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i]));
+				glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i].VQStoMatrix()));
 			}
 
 			ColorShader.Activate();
 			for (int i = 0; i < transforms.size(); ++i)
 			{
 				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
-				glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i]));
+				glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i].VQStoMatrix()));
 			}
 
 			for (int i = 0; i < model1.meshes.size(); i++)
 			{
 				
 				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				if (drawFrame) 
+				{
+					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+				}	
 				model1.meshes[i].Draw(shaderProgram, camera);
 				glClear(GL_DEPTH_BUFFER_BIT);
-				skeleton.DrawLine(ColorShader, camera);
-				
+				if (drawBone)
+				{
+					skeleton.DrawPoint(ColorShader, camera);
+					skeletonLine.DrawLine(ColorShader, camera);
+				}
 			}
 		}
 		
 		light.Draw(lightShader,camera);
 
 		ImGui::Begin("Hello Imgui");
-		ImGui::Text("Take this");
-		ImGui::Checkbox("DrawTriangle", &drawTriangle);
-		ImGui::SliderFloat("Rotation", &rotation, -200.0f, 220.0f);
+		ImGui::Text("WASD to move, SHIFT to speed up");
+		ImGui::Text("Change View Angle by left click drag");
+		ImGui::Text("%2.2f estimated FPS", FPS);
+		ImGui::Checkbox("DrawModel", &drawTriangle);
+		ImGui::Checkbox("DrawFrame", &drawFrame);
+		ImGui::Checkbox("DrawBone", &drawBone);
+		ImGui::Checkbox("Pause Animation", &animPause);
+		
+		//ImGui::SliderFloat("Rotation", &rotation, -200.0f, 220.0f);
 		ImGui::End();
 
 		ImGui::Render();

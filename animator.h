@@ -17,6 +17,10 @@ public:
 
     void CalculateBoneVQS(const AssimpNodeData* node, VQS parentVQS);
 
+    std::vector<VQS> GetFinalBoneVQSes()
+    {
+        return m_FinalBoneVQSes;
+    }
    /* void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
     {
         std::string nodeName = node->name;
@@ -43,23 +47,25 @@ public:
             CalculateBoneTransform(&node->children[i], globalTransformation);
     }*/
 
-    std::vector<glm::mat4> GetFinalBoneMatrices()
+   
+
+   /* std::vector<glm::mat4> GetFinalBoneMatrices()
     {
         for (int i = 0; i < 100; i++)
         {
             m_FinalBoneMatrices[i] = m_FinalBoneVQSes[i].VQStoMatrix();
         }
         return m_FinalBoneMatrices;
-    }
+    }*/
 
 private:
-    std::vector<glm::mat4> m_FinalBoneMatrices;
+    //std::vector<glm::mat4> m_FinalBoneMatrices;
     std::vector<VQS> m_FinalBoneVQSes;
     std::vector <Vertex> SkeletonVertices;
     std::vector <GLuint> SkeletonIndices;
     Animation* m_CurrentAnimation;
     float m_CurrentTime;
-    float m_DeltaTime;
+    float m_DeltaTime=0;
 };
 
 #endif

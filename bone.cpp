@@ -4,8 +4,7 @@
 Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
     :
     m_Name(name),
-    m_ID(ID),
-    m_LocalTransform(1.0f)
+    m_ID(ID)
 {
     m_NumPositions = channel->mNumPositionKeys;
 
@@ -44,14 +43,7 @@ Bone::Bone(const std::string& name, int ID, const aiNodeAnim* channel)
 
 void Bone::Update(float animationTime)
 {
-
-    //glm::mat4 translation = InterpolatePosition(animationTime);
-    //glm::mat4 rotation = InterpolateRotation(animationTime);
-    //glm::mat4 scale = InterpolateScaling(animationTime);
-    //m_LocalTransform = translation * rotation * scale;
-
     VQS local(GetInterpolatedPos(animationTime), GetInterpolatedQuat(animationTime), GetInterpolatedScale(animationTime));
-    m_LocalTransform = local.VQStoMatrix();
     m_LocalVQS = local;
 }
 

@@ -24,6 +24,38 @@ Bone* Animation::FindBone(const std::string& name)
     else return &(*iter);
 }
 
+void Animation::GetSkeletonBones()
+{
+    int i = 0;
+    for (auto iter = m_BoneInfoMap.begin(); iter != m_BoneInfoMap.end(); iter++)
+    {
+        iter->second.indexInList = i;
+        m_SkeletonBones.push_back(iter->second.boneVertex);
+        m_SkeletonBonesIndices.push_back(i);
+        i++;
+    }
+}
+
+void Animation::GetSkeletonBoneHiearchy(const AssimpNodeData* node, int parentBoneIndex)
+{
+    std::string nodeName = node->name;
+
+    auto boneInfoMap = GetBoneIDMap();
+    int index = parentBoneIndex;
+    if (boneInfoMap.find(nodeName) != boneInfoMap.end())
+    {
+        index = boneInfoMap[nodeName].indexInList;
+    }
+
+    if (index != 0 && parentBoneIndex != 0)
+    {
+        m_SkeletonBoneLineIndices.push_back(index);
+        m_SkeletonBoneLineIndices.push_back(parentBoneIndex);
+    }
+    for (int i = 0; i < node->childrenCount; i++)
+        GetSkeletonBoneHiearchy(&node->children[i], index);
+}
+
 void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
 {
     int size = animation->mNumChannels;

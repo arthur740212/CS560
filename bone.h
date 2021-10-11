@@ -21,14 +21,12 @@ struct KeyPosition
 struct KeyRotation
 {
     Quaternion qua;
-    //glm::quat orientation;
     float timeStamp;
 };
 
 struct KeyScale
 {
     float uniScale;
-    //glm::vec3 scale;
     float timeStamp;
 };
 
@@ -42,7 +40,7 @@ private:
     int m_NumRotations;
     int m_NumScalings;
 
-    glm::mat4 m_LocalTransform;
+    //glm::mat4 m_LocalTransform;
     VQS m_LocalVQS;
     std::string m_Name;
     int m_ID;
@@ -56,7 +54,7 @@ public:
     Quaternion GetInterpolatedQuat(float animationTime);
     float GetInterpolatedScale(float animationTime);
 
-    glm::mat4 GetLocalTransform() { return m_LocalTransform; }
+    //glm::mat4 GetLocalTransform() { return m_LocalTransform; }
     VQS GetLocalVQS() { return m_LocalVQS; }
     std::string GetBoneName() const { return m_Name; }
     int GetBoneID() { return m_ID; }

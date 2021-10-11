@@ -16,7 +16,7 @@
 
 struct AssimpNodeData
 {
-    glm::mat4 transformation;
+    //glm::mat4 transformation;
     VQS vqsTrans;
     std::string name;
     int childrenCount;
@@ -48,29 +48,17 @@ public:
         return m_BoneInfoMap;
     }
 
-    void GetSkeletonBones() 
-    {
-        int i = 0;
-        for (auto iter = m_BoneInfoMap.begin(); iter != m_BoneInfoMap.end(); iter++)
-        {
-            m_SkeletonBones.push_back(iter->second.boneVertex);
-            m_SkeletonBonesIndices.push_back(i);
-            i++;
-        }
-    }
-  /*  void UpdateSkeletonBones(std::vector<Vertex>& vertices) 
-    {
-        int i = 0;
-        for (auto iter = m_BoneInfoMap.begin(); iter != m_BoneInfoMap.end(); iter++)
-        {
-            vertices[i].position = iter->second.boneVertex.position;
-            vertices[i].position = glm::vec3(i, i, i);
-            i++;
-        }
-    }*/
+    //Gets the vertices of the bones for point display
+    void GetSkeletonBones();
+
+    //Gets the links between bone vertices for line display
+    void GetSkeletonBoneHiearchy(const AssimpNodeData* node, int parentBoneIndex);
+  
     std::vector<Vertex> m_SkeletonBones;
     std::vector<GLuint> m_SkeletonBonesIndices;
+    std::vector<GLuint> m_SkeletonBoneLineIndices;
     std::vector<Texture> m_SkeletonBonesTextures;
+
 private:
     void ReadMissingBones(const aiAnimation* animation, Model& model);
 
@@ -79,11 +67,8 @@ private:
         assert(src);
 
         dest.name = src->mName.data;
-        dest.transformation = ConvertMatrixToGLMFormat(src->mTransformation);
+        //dest.transformation = ConvertMatrixToGLMFormat(src->mTransformation);
         dest.vqsTrans.Decompose(src->mTransformation);
-
-        /*std::cout << glm::to_string(dest.transformation) << std::endl;
-        std::cout << glm::to_string(dest.vqsTrans.VQStoMatrix()) << std::endl;*/
 
         dest.childrenCount = src->mNumChildren;
 
@@ -94,6 +79,8 @@ private:
             dest.children.push_back(newData);
         }
     }
+
+
     float m_Duration;
     int m_TicksPerSecond;
     std::vector<Bone> m_Bones;
