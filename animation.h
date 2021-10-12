@@ -60,25 +60,13 @@ public:
     std::vector<Texture> m_SkeletonBonesTextures;
 
 private:
-    void ReadMissingBones(const aiAnimation* animation, Model& model);
 
-    void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)
-    {
-        assert(src);
+    //Add the bones to a map following the hierarchical node structure
+    void ReadBones(const aiAnimation* animation, Model& model);
 
-        dest.name = src->mName.data;
-        //dest.transformation = ConvertMatrixToGLMFormat(src->mTransformation);
-        dest.vqsTrans.Decompose(src->mTransformation);
-
-        dest.childrenCount = src->mNumChildren;
-
-        for (int i = 0; i < src->mNumChildren; i++)
-        {
-            AssimpNodeData newData;
-            ReadHeirarchyData(newData, src->mChildren[i]);
-            dest.children.push_back(newData);
-        }
-    }
+    //Create the node hierarchy
+    void ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src);
+    
 
 
     float m_Duration;

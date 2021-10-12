@@ -118,8 +118,8 @@ int main()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 
-	Model model1("yodan.x");
-	Animation anim1("yodan.x", &model1);
+	Model model1("stamp.x");
+	Animation anim1("stamp.x", &model1);
 	Animator animor1(&anim1);
 	anim1.GetSkeletonBones();
 	anim1.GetSkeletonBoneHiearchy(&anim1.GetRootNode(), 0);

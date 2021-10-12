@@ -9,7 +9,7 @@ Animation::Animation(const std::string& animationPath, Model* model)
     m_Duration = animation->mDuration;
     m_TicksPerSecond = animation->mTicksPerSecond;
     ReadHeirarchyData(m_RootNode, scene->mRootNode);
-    ReadMissingBones(animation, *model);
+    ReadBones(animation, *model);
 }
 
 Bone* Animation::FindBone(const std::string& name)
@@ -56,7 +56,7 @@ void Animation::GetSkeletonBoneHiearchy(const AssimpNodeData* node, int parentBo
         GetSkeletonBoneHiearchy(&node->children[i], index);
 }
 
-void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
+void Animation::ReadBones(const aiAnimation* animation, Model& model)
 {
     int size = animation->mNumChannels;
 
@@ -79,4 +79,22 @@ void Animation::ReadMissingBones(const aiAnimation* animation, Model& model)
     }
 
     m_BoneInfoMap = boneInfoMap;
+}
+
+void Animation::ReadHeirarchyData(AssimpNodeData& dest, const aiNode* src)
+{
+    assert(src);
+
+    dest.name = src->mName.data;
+    //dest.transformation = ConvertMatrixToGLMFormat(src->mTransformation);
+    dest.vqsTrans.Decompose(src->mTransformation);
+
+    dest.childrenCount = src->mNumChildren;
+
+    for (int i = 0; i < src->mNumChildren; i++)
+    {
+        AssimpNodeData newData;
+        ReadHeirarchyData(newData, src->mChildren[i]);
+        dest.children.push_back(newData);
+    }
 }

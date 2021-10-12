@@ -11,10 +11,14 @@ class Animator
 public:
     Animator(Animation* Animation);
 
+    //Updates the time and the Bones VQS according to time
     void UpdateAnimation(float dt);
 
     void PlayAnimation(Animation* pAnimation);
 
+    //Calculate the GLOBAL SPACE VQS for each bone following through the hierarchy
+    //convert and store them into a list of MATRICES, which is later passed into the shader
+    //for vertex multiplication
     void CalculateBoneVQS(const AssimpNodeData* node, VQS parentVQS);
 
     std::vector<VQS> GetFinalBoneVQSes()
@@ -60,9 +64,7 @@ public:
 
 private:
     //std::vector<glm::mat4> m_FinalBoneMatrices;
-    std::vector<VQS> m_FinalBoneVQSes;
-    std::vector <Vertex> SkeletonVertices;
-    std::vector <GLuint> SkeletonIndices;
+    std::vector <VQS> m_FinalBoneVQSes;
     Animation* m_CurrentAnimation;
     float m_CurrentTime;
     float m_DeltaTime=0;

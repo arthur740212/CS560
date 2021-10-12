@@ -40,7 +40,6 @@ private:
     int m_NumRotations;
     int m_NumScalings;
 
-    //glm::mat4 m_LocalTransform;
     VQS m_LocalVQS;
     std::string m_Name;
     int m_ID;
@@ -54,22 +53,14 @@ public:
     Quaternion GetInterpolatedQuat(float animationTime);
     float GetInterpolatedScale(float animationTime);
 
-    //glm::mat4 GetLocalTransform() { return m_LocalTransform; }
     VQS GetLocalVQS() { return m_LocalVQS; }
     std::string GetBoneName() const { return m_Name; }
     int GetBoneID() { return m_ID; }
 
 
-    /* Gets the current index on mKeyPositions to interpolate to based on
-    the current animation time*/
+    //Selects which key frame to use according to current time.
     int GetPositionIndex(float animationTime);
-
-    /* Gets the current index on mKeyRotations to interpolate to based on the
-    current animation time*/
     int GetRotationIndex(float animationTime);
-
-    /* Gets the current index on mKeyScalings to interpolate to based on the
-    current animation time */
     int GetScaleIndex(float animationTime);
 
 private:
@@ -111,26 +102,6 @@ private:
         glm::quat finalRotation = glm::slerp(m_Rotations[p0Index].orientation,
             m_Rotations[p1Index].orientation, scaleFactor);
         finalRotation = glm::normalize(finalRotation);
-        Quaternion q1(m_Rotations[p0Index].qua.Normalized());
-        Quaternion q2(m_Rotations[p1Index].qua.Normalized());
-        float t = (animationTime - m_Positions[p0Index].timeStamp) / (m_Positions[p1Index].timeStamp - m_Positions[p0Index].timeStamp);
-        float dotProd = q1.Dot(q2);
-        if (dotProd > 1.0f) { dotProd = 1.0f; }
-        if (dotProd < -1.0f) { dotProd = -1.0f; }
-        float alpha = acos(dotProd);
-        float sinAlpha = sin(alpha);
-        Quaternion finQua;
-        if (sinAlpha != 0) 
-        {
-            finQua = q1.Scale(sin((1 - t) * alpha) / sinAlpha) + q2.Scale(sin(t * alpha) / sinAlpha);
-        }
-        else
-        {
-            finQua = q1;
-        }
-        finQua.Normalize();
-        std::cout << glm::to_string(finalRotation) << std::endl;
-        std::cout << q1.Dot(q2)<<" "<< alpha << "\n" << finQua << std::endl;
         return glm::toMat4(finalRotation);
     }
 
