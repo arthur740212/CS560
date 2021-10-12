@@ -80,9 +80,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>..\CS560\Libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>..\CS560\Libraries\lib;$(LibraryPath)</LibraryPath>
-    <ReferencePath>..\CS560\Libraries\dll;$(ReferencePath)</ReferencePath>
+    <IncludePath>$(ProjectDir)Libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)Libraries\lib;$(LibraryPath)</LibraryPath>
+    <ReferencePath>$(ProjectDir)Libraries\dll;$(ReferencePath)</ReferencePath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
