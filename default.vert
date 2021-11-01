@@ -16,6 +16,8 @@ out vec2 texCoord;
 uniform mat4 camMatrix;
 
 uniform mat4 model;
+uniform mat4 modelOrient;
+uniform mat4 modelPos;
 uniform mat4 view;
 uniform mat4 proj;
 
@@ -46,6 +48,7 @@ void main()
 	color = aColor;
 	texCoord = aTex;
 	
+    mat4 modelMat = modelPos* model* modelOrient;
 	//gl_Position = camMatrix *vec4(curPos, 1.0f);
-	gl_Position = camMatrix * model * totalPosition;
+	gl_Position = camMatrix * modelMat * totalPosition;
 }

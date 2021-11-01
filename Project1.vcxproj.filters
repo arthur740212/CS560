@@ -96,6 +96,12 @@
     <ClCompile Include="animator.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
+    <ClCompile Include="spacecurve.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
+    <ClCompile Include="speedtime.cpp">
+      <Filter>來源檔案</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaderClass.h">
@@ -167,6 +173,12 @@
     <ClInclude Include="animator.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
+    <ClInclude Include="spacecurve.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
+    <ClInclude Include="speedtime.h">
+      <Filter>標頭檔</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="default.frag">
@@ -185,6 +197,12 @@
       <Filter>資源檔\Shaders</Filter>
     </None>
     <None Include="defaultColor.vert">
+      <Filter>資源檔\Shaders</Filter>
+    </None>
+    <None Include="SpaceCurve.vert">
+      <Filter>資源檔\Shaders</Filter>
+    </None>
+    <None Include="SpaceCurve.frag">
       <Filter>資源檔\Shaders</Filter>
     </None>
   </ItemGroup>

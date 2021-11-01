@@ -9,8 +9,6 @@ layout (location = 5) in ivec4 boneIds;
 uniform mat4 camMatrix;
 
 uniform mat4 model;
-uniform mat4 modelOrient;
-uniform mat4 modelPos;
 
 const int MAX_BONES = 100;
 uniform mat4 finalBonesMatrices[MAX_BONES];
@@ -25,7 +23,6 @@ void main()
 
 	vec4 localPosition = finalBonesMatrices[boneIds[0]] * vec4(aPos,1.0f);
 
-	mat4 modelMat = modelPos* model* modelOrient;
-	gl_Position = camMatrix * modelMat * localPosition;
+	gl_Position = camMatrix * model * localPosition;
 	//gl_Position = camMatrix * vec4(curPos, 1.0f);
 }

@@ -19,6 +19,8 @@ public:
 	// Initializes the mesh
 	Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& textures);
 
+
+	void RebindVertices(std::vector <Vertex>& vertices);
 	// Draws the mesh
 	void Draw(Shader& shader, Camera& camera);
 	void DrawPoint(Shader& shader, Camera& camera);

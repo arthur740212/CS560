@@ -24,6 +24,24 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 	
 }
 
+void Mesh::RebindVertices(std::vector <Vertex>& vertices) 
+{
+	Mesh::vertices = vertices;
+
+	VAO.Bind();
+
+	VBO VBO(vertices);
+	EBO EBO(indices);
+
+	VAO.LinkVBO(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+	VAO.LinkVBO(VBO, 2, 3, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+
+	VAO.Unbind();
+	VBO.Unbind();
+	EBO.Unbind();
+}
+
+
 void Mesh::DrawPoint(Shader& shader, Camera& camera)
 {
 	shader.Activate();
