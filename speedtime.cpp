@@ -8,11 +8,7 @@ SpeedTime::SpeedTime(float _t1, float _t2, float _tmax) :t1(_t1), t2(_t2), tmax(
 
 void SpeedTime::CalculateVmax()
 {
-	float accel = t1 / 2.0f;
-	float decel = (tmax - t2) / 2.0f;
-	float constant = (t2 - t1);
-
-	vmax = 1.0f / (accel + constant + decel);
+	vmax = 1.0f / (tmax + t2 - t1) * 2.0f;
 }
 
 float SpeedTime::getSpeedFromDeltaTime(float input)

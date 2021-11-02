@@ -36,18 +36,28 @@ public:
 	glm::vec3 aPoints[CONTROL_POINT_COUNT];
 	glm::vec3 bPoints[CONTROL_POINT_COUNT];
 
-
+	//initialize the space curve with the default control points
+	//also initialize sizes of the vectors that gets passed to shader
 	SpaceCurve();
 
+	//Generates intermediate control points from the main control points
 	void CreateIntermediateControlPoint();
-	void createTable();
 
-	float EvalArc(float input);
-	glm::vec3 constSpeedEval(float input);
-
+	//Updates the data that gets passed to the shader vertices/indices
 	void UpdateSpaceCurve();
 
+	//The DeCastlejau alg that calculates the positions on the curve (100 between each 2 control points)
 	glm::vec3 Interpolate(float input);
+
+	//Creates a segment table by adaptive approach
+	//Also normalizes the totalArclength to one after creating the whole table
+	void createTable();
+
+	//Returns the corresponding u of a given normalized arclength (binary search)
+	float EvalArc(float input);
+
+	//Returns the position of a given normalized arclength
+	glm::vec3 constSpeedEval(float input);
 
 
 public:

@@ -172,6 +172,8 @@ int main()
 	glm::mat4 modelOrient = glm::mat4(1.0f);
 	glm::mat4 modelPos = glm::mat4(1.0f);
 
+	glm::mat4 floorSize = glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 10.0f, 10.0f));
+
 	lightShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
 	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
@@ -183,9 +185,15 @@ int main()
 	Shader ColorShader("defaultColor.vert", "defaultColor.frag");
 	ColorShader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
-
+	
 	Shader CurveShader("SpaceCurve.vert", "SpaceCurve.frag");
 	CurveShader.Activate();
+
+	Shader FloorShader("light.vert", "default.frag");
+	FloorShader.Activate();
+	glUniformMatrix4fv(glGetUniformLocation(FloorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(floorSize));
+	glUniform4f(glGetUniformLocation(FloorShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	glUniform3f(glGetUniformLocation(FloorShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
 	bool drawTriangle = true;
 	bool drawFrame = false;
@@ -204,6 +212,9 @@ int main()
 	float curveTime = 0.0f;
 	SpeedTime speedtime(10.0f, 24.0f, 30.0f);
 
+	float animPace = 7.0f;
+	float zeroAnimSpeed = 0.03f;
+
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -218,7 +229,7 @@ int main()
 
 		if (!animPause)
 		{
-			animor1.UpdateAnimation((speedtime.getSpeedFromDeltaTime(curveTime) + 0.03f) / 7.0f);
+			animor1.UpdateAnimation((speedtime.getSpeedFromDeltaTime(curveTime) + zeroAnimSpeed) / animPace);
 		}
 		glClearColor(0.7f, 0.7f, 0.5f, 0.5f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -238,12 +249,18 @@ int main()
 		camera.Matrix(shaderProgram, "camMatrix");
 
 		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.position.x, camera.position.y, camera.position.z);
-
+		
+		FloorShader.Activate();
+		camera.Matrix(FloorShader, "camMatrix");
+		glUniform3f(glGetUniformLocation(FloorShader.ID, "camPos"), camera.position.x, camera.position.y, camera.position.z);
+		floor.Draw(FloorShader, camera);
+		
 		ColorShader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "modelPos"), 1, GL_FALSE, glm::value_ptr(modelPos));
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "modelOrient"), 1, GL_FALSE, glm::value_ptr(modelOrient));
-		//floor.Draw(ColorShader, camera);
+
+		
 
 		if (drawTriangle)
 		{
@@ -254,7 +271,7 @@ int main()
 			modelPos = glm::translate(glm::mat4(1.0f), curPos);
 			modelOrient = glm::inverse(glm::lookAt(spaceCurve.Interpolate(facingUnit), curPos, glm::vec3(0.0f, 1.0f, 0.0f)));
 
-			printf("%f %f %f\n", curveTime, arcRatio, onCurveUnit);
+			//printf("%f %f %f\n", curveTime, arcRatio, onCurveUnit);
 			//modelOrient = glm::lookAt(curPos, glm::vec3(0), glm::vec3(0.0f, -1.0f, 0.0f));
 			shaderProgram.Activate();
 			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
@@ -313,6 +330,8 @@ int main()
 		ImGui::Checkbox("DrawFrame", &drawFrame);
 		ImGui::Checkbox("DrawBone", &drawBone);
 		ImGui::Checkbox("Pause Animation", &animPause);
+		ImGui::SliderFloat("Animation Pace", &animPace, 6.0f, 20.0f);
+		ImGui::SliderFloat("Animation Speed at zero velocity ", &zeroAnimSpeed, 0.0f, 0.1f);
 		if (ImGui::SliderFloat("Accelerate Time", &speedtime.t1, 0.0f, speedtime.t2)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
 		if (ImGui::SliderFloat("MaxSpeed Time", &speedtime.t2, speedtime.t1, speedtime.tmax)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
 		if (ImGui::SliderFloat("Decelerate Time", &speedtime.tmax, speedtime.t2, 50.0f)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
