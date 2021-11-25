@@ -21,8 +21,16 @@ struct AssimpNodeData
     std::string name;
     int childrenCount;
     std::vector<AssimpNodeData> children;
+
+    bool isIK = false;
 };
 
+struct Manipulator
+{
+    std::vector<std::string> nodeNames;
+    std::vector<int> priority;
+    std::string priorityString;
+};
 class Animation
 {
 public:
@@ -48,6 +56,8 @@ public:
         return m_BoneInfoMap;
     }
 
+    inline const Manipulator& GetManip() { return m_manip; }
+
     //Gets the vertices of the bones for point display
     void GetSkeletonBones();
 
@@ -58,6 +68,28 @@ public:
     std::vector<GLuint> m_SkeletonBonesIndices;
     std::vector<GLuint> m_SkeletonBoneLineIndices;
     std::vector<Texture> m_SkeletonBonesTextures;
+
+    //void SetIKRoot(AssimpNodeData& dest, std::string name);
+    //void SetIKLinks(AssimpNodeData& dest);
+
+    //Find the node/bone by name, and set it that it is calculated by IK
+    void SetIsIK(AssimpNodeData& dest, std::string name);
+
+    //Find the parent of the node/bone, returns the name of the parent
+    std::string FindParentNodeName(AssimpNodeData& dest, std::string name);
+
+    //Creates a list of joints controlled by IK, starting from the end effector
+    void SetManipulator(AssimpNodeData& dest, std::string name, int count);
+
+    //Sets the order of priority, index 0 ~ size - 1 (high ~ low priority)  stores the index of the joints
+    //default is 0 ~ size-1
+    void SetDefaultPriority();
+
+    //this randomizes the priorities
+    void SetNewPriority();
+
+    //helper to represent the priority orden into a string 
+    std::string SetPriorityString();
 
 private:
 
@@ -74,6 +106,7 @@ private:
     std::vector<Bone> m_Bones;
     AssimpNodeData m_RootNode;
     std::map<std::string, BoneInfo> m_BoneInfoMap;
+    Manipulator m_manip;
 };
 
 

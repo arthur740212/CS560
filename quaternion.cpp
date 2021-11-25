@@ -10,7 +10,7 @@ std::ostream& operator<<(std::ostream& out, Quaternion q)
 Quaternion::Quaternion() 
 {
 	s = 1.0f;
-	v = glm::vec3(0);
+	v = glm::vec3(0.0f);
 }
 Quaternion& Quaternion::operator=(const Quaternion& rhs)
 {

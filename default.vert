@@ -49,6 +49,7 @@ void main()
 	texCoord = aTex;
 	
     mat4 modelMat = modelPos* model* modelOrient;
+
 	//gl_Position = camMatrix *vec4(curPos, 1.0f);
 	gl_Position = camMatrix * modelMat * totalPosition;
 }

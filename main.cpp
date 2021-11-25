@@ -25,6 +25,8 @@
 
 #include <glm/gtx/string_cast.hpp>
 
+
+#pragma region previousstuff
 // Vertices coordinates
 Vertex vertices[] =
 { //               COORDINATES           /            COLORS          /           TexCoord         /       NORMALS         //
@@ -82,20 +84,12 @@ int main()
 	float deltaTime = 0;
 	float lastFrame = glfwGetTime();
 
-	//glm::mat4 mat1;
-	//glm::mat4 mat2;
-	//glm::mat4 mat3 = mat1 * mat2;
-
-	//std::cout << glm::to_string(mat1) << std::endl;
-	//std::cout << glm::to_string(mat2) << std::endl;
-	//std::cout << glm::to_string(mat3) << std::endl;
-
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR,3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR,3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(width, height, "Proj1", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(width, height, "Proj3", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cout << "failed to create window" << std::endl;
@@ -163,7 +157,16 @@ int main()
 	glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
 	glm::mat4 lightModel = glm::mat4(1.0f);
 	lightModel = glm::translate(lightModel, lightPos);
+	
+	//Create Target Mesh
+	Mesh target(lightVerts, lightInd, tex);
 
+	glm::vec4 targetColor = glm::vec4(1.0f, 1.0f, 0.0f, 1.0f);
+	glm::vec3 targetPos = glm::vec3(-0.5f, 0.5f, 0.5f);
+	glm::mat4 targetModel = glm::mat4(1.0f);
+	targetModel = glm::translate(targetModel, targetPos);
+
+	//Pyramid
 	glm::vec3 pyramidPos = glm::vec3(0.0f, 0.0f, 0.0f);
 	glm::mat4 pyramidModel = glm::mat4(1.0f);
 	pyramidModel = glm::translate(pyramidModel, pyramidPos);
@@ -174,9 +177,7 @@ int main()
 
 	glm::mat4 floorSize = glm::scale(glm::mat4(1.0f), glm::vec3(10.0f, 10.0f, 10.0f));
 
-	lightShader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
-	glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+	
 	shaderProgram.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(pyramidModel));
 	glUniform4f(glGetUniformLocation(shaderProgram.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
@@ -203,7 +204,7 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 
-	Camera camera(width, height, glm::vec3(0.0f, 3.0f, 15.0f));
+	Camera camera(width, height, glm::vec3(0.0f, 2.0f, 10.0f));
 
 	float onCurveUnit = 0.0f;
 	float arcRatio = 0.0f;
@@ -215,6 +216,10 @@ int main()
 	float animPace = 7.0f;
 	float zeroAnimSpeed = 0.03f;
 
+	bool isApproach = true;
+	glm::vec3 curPos = glm::vec3(0.0f);
+	std::string priorString = anim1.SetPriorityString();
+
 	while (!glfwWindowShouldClose(window))
 	{
 
@@ -223,21 +228,22 @@ int main()
 		lastFrame = currentFrame;
 		float FPS = 1 / deltaTime;
 
-		curveTime += deltaTime;
-		if (curveTime >= speedtime.tmax) { curveTime -= speedtime.tmax; }
-		arcRatio = speedtime.getArcRatioFromDeltaTime(curveTime);
+		//curveTime += deltaTime;
+		//if (curveTime >= speedtime.tmax) { curveTime -= speedtime.tmax; }
+		//arcRatio = speedtime.getArcRatioFromDeltaTime(curveTime);
+		//
+		//if (!animPause)
+		//{
+		//	animor1.UpdateAnimation((speedtime.getSpeedFromDeltaTime(curveTime) + zeroAnimSpeed) / animPace);
+		//}
 
-		if (!animPause)
-		{
-			animor1.UpdateAnimation((speedtime.getSpeedFromDeltaTime(curveTime) + zeroAnimSpeed) / animPace);
-		}
 		glClearColor(0.7f, 0.7f, 0.5f, 0.5f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
+#pragma region Shaderstuff
 		if (!io.WantCaptureMouse)
 		{
 			//application input handling
@@ -249,100 +255,153 @@ int main()
 		camera.Matrix(shaderProgram, "camMatrix");
 
 		glUniform3f(glGetUniformLocation(shaderProgram.ID, "camPos"), camera.position.x, camera.position.y, camera.position.z);
-		
+
 		FloorShader.Activate();
 		camera.Matrix(FloorShader, "camMatrix");
 		glUniform3f(glGetUniformLocation(FloorShader.ID, "camPos"), camera.position.x, camera.position.y, camera.position.z);
 		floor.Draw(FloorShader, camera);
-		
+
 		ColorShader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "modelPos"), 1, GL_FALSE, glm::value_ptr(modelPos));
 		glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, "modelOrient"), 1, GL_FALSE, glm::value_ptr(modelOrient));
 
-		
+		lightShader.Activate();
+		glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
+		glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+		light.Draw(lightShader, camera);
 
-		if (drawTriangle)
-		{
-			onCurveUnit = spaceCurve.EvalArc(arcRatio);
+		targetModel = glm::translate(glm::mat4(1.0f), targetPos);
+
+		glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(targetModel));
+		glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), targetColor.x, targetColor.y, targetColor.z, targetColor.w);
+		target.Draw(lightShader, camera);
+#pragma endregion
+		//if (drawTriangle)
+		//{
+		/*	onCurveUnit = spaceCurve.EvalArc(arcRatio);
 			facingUnit = onCurveUnit + 0.1f;
 			if (facingUnit > CONTROL_POINT_COUNT) { facingUnit -= CONTROL_POINT_COUNT; }
 			glm::vec3 curPos = spaceCurve.Interpolate(onCurveUnit);
 			modelPos = glm::translate(glm::mat4(1.0f), curPos);
-			modelOrient = glm::inverse(glm::lookAt(spaceCurve.Interpolate(facingUnit), curPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+			modelOrient = glm::inverse(glm::lookAt(spaceCurve.Interpolate(facingUnit), curPos, glm::vec3(0.0f, 1.0f, 0.0f)));*/
+#pragma endregion
 
-			//printf("%f %f %f\n", curveTime, arcRatio, onCurveUnit);
-			//modelOrient = glm::lookAt(curPos, glm::vec3(0), glm::vec3(0.0f, -1.0f, 0.0f));
-			shaderProgram.Activate();
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "modelPos"), 1, GL_FALSE, glm::value_ptr(modelPos));
-			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "modelOrient"), 1, GL_FALSE, glm::value_ptr(modelOrient));
-			auto transforms = animor1.GetFinalBoneVQSes();
-			for (int i = 0; i < transforms.size(); ++i)
+#pragma region Project3 is here (in the render loop)
+
+		//Gets targets pos on xz plane
+		glm::vec3 horizonTargetPos = targetPos;
+		horizonTargetPos.y = 0.0f;
+
+
+		if (isApproach)
+		{
+			//approach target when we press Move Towards Target Button, faces the targets
+			//Stops when close enough
+			if (glm::length(horizonTargetPos - curPos) < 0.5f) { isApproach = false; }
+			else 
 			{
-				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
-				glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i].VQStoMatrix()));
+				curPos = glm::normalize(horizonTargetPos - curPos) * deltaTime + curPos;
+				modelPos = modelPos = glm::translate(glm::mat4(1.0f), curPos);
+				modelOrient = glm::inverse(glm::lookAt(horizonTargetPos, curPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+				animor1.UpdateAnimation(deltaTime);
 			}
+		}
 
-			ColorShader.Activate();
-			for (int i = 0; i < transforms.size(); ++i)
+
+		else 
+		{
+			//When model not moving, the links point toward the target  
+			modelOrient = glm::inverse(glm::lookAt(horizonTargetPos, curPos, glm::vec3(0.0f, 1.0f, 0.0f)));
+
+			VQS ModelInverseVQS;
+			modelPos* modelSize* modelOrient;
+			ModelInverseVQS.decomposeMtx(modelPos * modelSize * modelOrient);
+
+			//target in world tranferred to target in model space
+			//Then calculate IK
+			animor1.DoIK(ModelInverseVQS.Inverse() * targetPos);
+		}
+
+#pragma endregion
+#pragma region previousstuff
+#pragma region Display	
+		shaderProgram.Activate();
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "model"), 1, GL_FALSE, glm::value_ptr(modelSize));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "modelPos"), 1, GL_FALSE, glm::value_ptr(modelPos));
+		glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, "modelOrient"), 1, GL_FALSE, glm::value_ptr(modelOrient));
+
+		auto transforms = animor1.GetFinalBoneVQSes();
+		for (int i = 0; i < transforms.size(); ++i)
+		{
+			std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
+			glUniformMatrix4fv(glGetUniformLocation(shaderProgram.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i].VQStoMatrix()));
+		}
+
+		ColorShader.Activate();
+		for (int i = 0; i < transforms.size(); ++i)
+		{
+			std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
+			glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i].VQStoMatrix()));
+		}
+
+		for (int i = 0; i < model1.meshes.size(); i++)
+		{
+
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			if (drawFrame)
 			{
-				std::string finalBoneMatrixString = "finalBonesMatrices[" + std::to_string(i) + "]";
-				glUniformMatrix4fv(glGetUniformLocation(ColorShader.ID, finalBoneMatrixString.c_str()), 1, GL_FALSE, glm::value_ptr(transforms[i].VQStoMatrix()));
+				glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 			}
-
-			for (int i = 0; i < model1.meshes.size(); i++)
+			//model1.meshes[i].Draw(shaderProgram, camera);
+			glClear(GL_DEPTH_BUFFER_BIT);
+			if (drawBone)
 			{
-
-				glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-				if (drawFrame)
-				{
-					glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-				}
-				model1.meshes[i].Draw(shaderProgram, camera);
-				glClear(GL_DEPTH_BUFFER_BIT);
-				if (drawBone)
-				{
-					skeleton.DrawPoint(ColorShader, camera);
-					skeletonLine.DrawLine(ColorShader, camera);
-				}
-
+				skeleton.DrawPoint(ColorShader, camera);
+				skeletonLine.DrawLine(ColorShader, camera);
 			}
 
 		}
+#pragma endregion	
+		//}
 		ColorShader.Activate();
 		//spaceCurve.UpdateSpaceCurve();
-		spaceCurveLine.RebindVertices(spaceCurve.spaceCurveVertices);
-		spaceCurveControlPoints.RebindVertices(spaceCurve.controlPointVertices);
-		spaceCurveLine.DrawLine(CurveShader, camera);
-		spaceCurveControlPoints.DrawPoint(CurveShader, camera);
-
-		light.Draw(lightShader, camera);
+		//spaceCurveLine.RebindVertices(spaceCurve.spaceCurveVertices);
+		//spaceCurveControlPoints.RebindVertices(spaceCurve.controlPointVertices);
+		//spaceCurveLine.DrawLine(CurveShader, camera);
+		//spaceCurveControlPoints.DrawPoint(CurveShader, camera);
 
 		ImGui::Begin("Hello Imgui");
 		ImGui::Text("WASD to move, SHIFT to speed up");
 		ImGui::Text("Change View Angle by left click drag");
 		ImGui::Text("%2.2f estimated FPS", FPS);
-		ImGui::Text("%1.4f normalized arc length", arcRatio);
+		/*ImGui::Text("%1.4f normalized arc length", arcRatio);
 		ImGui::Text("%1.4f speed (normalized arc length/time)", (speedtime.getSpeedFromDeltaTime(curveTime)));
-		ImGui::Text("%1.4f lap time", curveTime);
-		ImGui::Checkbox("DrawModel", &drawTriangle);
-		ImGui::Checkbox("DrawFrame", &drawFrame);
+		ImGui::Text("%1.4f lap time", curveTime);*/
+		//ImGui::Checkbox("DrawModel", &drawTriangle);
+		//ImGui::Checkbox("DrawFrame", &drawFrame);
 		ImGui::Checkbox("DrawBone", &drawBone);
-		ImGui::Checkbox("Pause Animation", &animPause);
-		ImGui::SliderFloat("Animation Pace", &animPace, 6.0f, 20.0f);
-		ImGui::SliderFloat("Animation Speed at zero velocity ", &zeroAnimSpeed, 0.0f, 0.1f);
-		if (ImGui::SliderFloat("Accelerate Time", &speedtime.t1, 0.0f, speedtime.t2)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
-		if (ImGui::SliderFloat("MaxSpeed Time", &speedtime.t2, speedtime.t1, speedtime.tmax)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
-		if (ImGui::SliderFloat("Decelerate Time", &speedtime.tmax, speedtime.t2, 50.0f)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
+		//ImGui::Checkbox("Pause Animation", &animPause);
+		/*ImGui::SliderFloat("Animation Pace", &animPace, 6.0f, 20.0f);
+		ImGui::SliderFloat("Animation Speed at zero velocity ", &zeroAnimSpeed, 0.0f, 0.1f);*/
+		if (ImGui::SliderFloat3("IK Targets Position", (float*)&targetPos, -3.0f, 3.0f));
+		if (ImGui::Button("Move Towards Target")) { isApproach = true; }
+		if (ImGui::Button("Default Priority")) { anim1.SetDefaultPriority(); animor1.GetManipFromAnimation(); priorString = anim1.SetPriorityString(); }
+		if (ImGui::Button("Random Priority")) { anim1.SetNewPriority(); animor1.GetManipFromAnimation(); priorString = anim1.SetPriorityString();}
+		ImGui::Text("Priority List (Parent Layer With Respect to End Effector)");
+		ImGui::Text(priorString.c_str());
 		
-		for (int i = 0; i < CONTROL_POINT_COUNT; i++)
+		/*if (ImGui::SliderFloat("Accelerate Time", &speedtime.t1, 0.0f, speedtime.t2)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
+		if (ImGui::SliderFloat("MaxSpeed Time", &speedtime.t2, speedtime.t1, speedtime.tmax)) { speedtime.CalculateVmax(); curveTime = 0.0f; }
+		if (ImGui::SliderFloat("Decelerate Time", &speedtime.tmax, speedtime.t2, 50.0f)) { speedtime.CalculateVmax(); curveTime = 0.0f; }*/
+
+		/*for (int i = 0; i < CONTROL_POINT_COUNT; i++)
 		{
 			if (ImGui::SliderFloat3(("ControlPoint[" + std::to_string(i) + "]").c_str(), (float*)&spaceCurve.controlPoints[i], -5.0f, 5.0f))
 			{
 				curveTime = 0.0f; spaceCurve.UpdateSpaceCurve();
 			}
-		}
+		}*/
 		//ImGui::SliderFloat3("ControlPoint[0]", (float*)&spaceCurve.controlPoints[0], -5.0f, 5.0f);
 		//ImGui::SliderFloat3("ControlPoint[1]", (float*)&spaceCurve.controlPoints[1], -5.0f, 5.0f);
 		//ImGui::SliderFloat3("ControlPoint[2]", (float*)&spaceCurve.controlPoints[2], -5.0f, 5.0f);
@@ -355,7 +414,7 @@ int main()
 		//ImGui::SliderFloat3("ControlPoint[9]", (float*)&spaceCurve.controlPoints[9], -5.0f, 5.0f);
 		//if (ImGui::Button("Recalculate Space Curve")) { curveTime = 0.0f; spaceCurve.UpdateSpaceCurve(); }
 
-
+		
 		ImGui::End();
 
 		ImGui::Render();
@@ -380,3 +439,4 @@ int main()
 
 	return 0;
 }
+#pragma endregion

@@ -36,7 +36,7 @@ VQS VQS::operator*(VQS rhs)
 	VQS result;
 
 	result.scale = scale * rhs.scale;
-	result.quaternion = quaternion * rhs.quaternion;
+	result.quaternion = (quaternion * rhs.quaternion).Normalized();
 	result.position = *this * (rhs.position);
 	return result;
 }
@@ -66,6 +66,24 @@ VQS VQS::Inverse()
 	glm::vec3 invPos = -(temp * position);
 	return VQS(invPos, quaternion.Inverse(), 1.0f / scale);
 
+}
+
+void VQS::decomposeMtx(const glm::mat4& m)
+{
+	position = m[3];
+	glm::vec3 tscale;
+	for (int i = 0; i < 3; i++)
+	{
+		tscale[i] = glm::length(glm::vec3(m[i]));
+	}
+	scale = tscale[0];
+	const glm::mat3 rotMtx(
+		glm::vec3(m[0]) / tscale[0],
+		glm::vec3(m[1]) / tscale[1],
+		glm::vec3(m[2]) / tscale[2]);
+	glm::quat rot = glm::quat_cast(rotMtx);
+	quaternion.s = rot.w;
+	quaternion.v = glm::vec3(rot.x, rot.y, rot.z);
 }
 
 void VQS::Decompose(aiMatrix4x4 aiMat)

@@ -26,6 +26,7 @@ public:
 
 	VQS Inverse();
 
+	void decomposeMtx(const glm::mat4& m);
 	void Decompose(aiMatrix4x4 aiMat);
 
 	glm::vec3 position;

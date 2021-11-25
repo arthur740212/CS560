@@ -21,10 +21,20 @@ public:
     //for vertex multiplication
     void CalculateBoneVQS(const AssimpNodeData* node, VQS parentVQS);
 
+    //Goes Hiearchically through the bones and calculate the VQSes, and pass them into an array of VQS that shader later takes
+    void CalculateBoneVQSAndIK(const AssimpNodeData* node, VQS parentVQS);
+
+    //Changes the Local VQSes of the IK controlled nodes, calculated from the VQS of the previous frame
+    //Then calls CalculateBoneVQSAndIK to prepare data for shader
+    void DoIK(glm::vec3 target);
+
     std::vector<VQS> GetFinalBoneVQSes()
     {
         return m_FinalBoneVQSes;
     }
+
+    void GetManipFromAnimation() { m_current_manip = m_CurrentAnimation->GetManip(); }
+    
    /* void CalculateBoneTransform(const AssimpNodeData* node, glm::mat4 parentTransform)
     {
         std::string nodeName = node->name;
@@ -64,10 +74,14 @@ public:
 
 private:
     //std::vector<glm::mat4> m_FinalBoneMatrices;
+    std::vector <VQS> m_LocalBoneVQSes;
+    std::vector <VQS> m_GlobalBoneVQSes;
     std::vector <VQS> m_FinalBoneVQSes;
     Animation* m_CurrentAnimation;
     float m_CurrentTime;
     float m_DeltaTime=0;
+    Manipulator m_current_manip;
+    
 };
 
 #endif

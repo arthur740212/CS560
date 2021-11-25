@@ -40,11 +40,12 @@ private:
     int m_NumRotations;
     int m_NumScalings;
 
-    VQS m_LocalVQS;
+   
     std::string m_Name;
     int m_ID;
 
-public:
+public: 
+    VQS m_LocalVQS;
     Bone(const std::string& name, int ID, const aiNodeAnim* channel);
 
     void Update(float animationTime);

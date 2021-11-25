@@ -26,6 +26,8 @@ struct BoneInfo
     //glm::mat4 offset;
 
     VQS offsetVQS;
+
+    bool isIK = false;
 };
 
 class Model
